@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import datetime
 import pickle
 
-# define some constants
+# define constants and control parameters
 CURRENT_PATH = os.getcwd()
 IMG_PATH = os.path.join(CURRENT_PATH, 'data/images/')
 IMG_LABELS_PATH = os.path.join(CURRENT_PATH, 'data/new_labels.csv')
@@ -31,10 +31,11 @@ IF_TUNE_KMEANS = False
 
 def train_test_idx(all_img_idx, train_percent, if_random_split=IF_RANDOM_SPLIT):
     """
-
-    :param all_img_idx: list of image index integers
-    :param train_percent:
-    :return:
+    Split training set and testing set.
+    :param all_img_idx: list of image index integers (actual image index in the file name)
+    :param train_percent: percentage of training set
+    :param if_random_split: if True then split randomly, otherwise set random seed
+    :return: list of training set image index and testing set image index
     """
     if not if_random_split:
         np.random.seed(1)
@@ -50,8 +51,8 @@ def train_test_idx(all_img_idx, train_percent, if_random_split=IF_RANDOM_SPLIT):
 def cal_SIFT(img):
     """
     Get SIFT descriptors of a single image.
-    :param img: image
-    :return: descriptors of size m * 128, m is the number of keypoints of the image
+    :param img: image object
+    :return: descriptors, numpy array size of k * 128, m is the number of keypoints of the image
     """
     sift = cv2.xfeatures2d.SIFT_create()
     kp, des = sift.detectAndCompute(img, None)
@@ -59,6 +60,11 @@ def cal_SIFT(img):
 
 
 def cal_SIFT_all(train_idx):
+    """
+    Calculate SIFT descriptors of all images in training set.
+    :param train_idx: list of training set image index
+    :return: numpy array, 
+    """
     print('\nCalculating SIFT for all images:')
     descriptors_list = []
     for idx in train_idx:
